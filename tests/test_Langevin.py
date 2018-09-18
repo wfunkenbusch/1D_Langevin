@@ -1,22 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-"""Tests for `Langevin` package."""
-
-
 import unittest
-
+import numpy as np
+import Langevin
 from Langevin import Langevin
+from Langevin.Langevin import *
 
+class RGK_unit_tests(unittest.TestCase):
 
-class TestLangevin(unittest.TestCase):
-    """Tests for `Langevin` package."""
-
-    def setUp(self):
-        """Set up test fixtures, if any."""
-
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-
-    def test_000_something(self):
-        """Test something."""
+if __name__ == "__main__":
+	unittest.main()

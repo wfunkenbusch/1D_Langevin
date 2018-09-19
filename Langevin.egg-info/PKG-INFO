@@ -10,6 +10,9 @@ Description: ========
         Langevin
         ========
         
+        .. image:: https://coveralls.io/repos/github/wfunkenbusch/1D_Langevin/badge.svg?branch=master
+                :target: https://coveralls.io/github/wfunkenbusch/1D_Langevin?branch=master
+        
         
         .. image:: https://img.shields.io/pypi/v/Langevin.svg
                 :target: https://pypi.python.org/pypi/Langevin

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import numpy as np
+import os.path
 import Langevin
 from Langevin import Langevin
 from Langevin.Langevin import *
@@ -33,7 +34,6 @@ class RGK_unit_tests(unittest.TestCase):
 
 class ODE_unit_tests(unittest.TestCase):
     def test_position(self):
-
         dxdt, dvdt = ODE(0, [1, 1], [1, 1])
         self.assertEqual(dxdt, 1)
 
@@ -48,6 +48,11 @@ class ODE_unit_tests(unittest.TestCase):
     def test_no_drag(self):
         dxdt, dvdt = ODE(0, [1, 1], [1, 0])
         self.assertEqual(dvdt, 0)
+
+class Langevin_unit_tests(unittest.TestCase):
+    def test_file(self):
+        Langevin('Test', 100, 1, 0, 0, 0.00000001, 1, 300)
+        self.assertTrue(os.path.exists('Test.txt'))
 
 if __name__ == "__main__":
 	unittest.main()

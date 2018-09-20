@@ -93,7 +93,7 @@ def ODE(t, x0, vals):
 
 def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
     t = np.linspace(0, t_t, int(t_t/dt))
-    rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t')
+    rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
     vals = [m, gamma]
     x0 = [init_pos, init_vel]
 

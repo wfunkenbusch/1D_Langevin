@@ -77,6 +77,7 @@ class ODE_unit_tests(unittest.TestCase):
 
 class Langevin_unit_tests(unittest.TestCase):
     def test_file(self):
+        np.random.seed(1234)
         Langevin(FileName = 'file_test.txt', t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
         self.assertTrue(os.path.exists('file_test.txt'))
 

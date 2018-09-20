@@ -32,6 +32,32 @@ class RGK_unit_tests(unittest.TestCase):
         val2 = RGK(lambda x, t, vals: t + x, t, [x0], vals, rand = [0, 0, 1])
         self.assertNotEqual(val1[0, -1], val2[0, -1])
 
+    def test_double_pos(self):
+        t = [0, 1]
+        x0 = [1, 1]
+        vals = [1, 1]
+
+        def fun(t, x0, vals):
+            return [1, 1]
+
+        x = RGK(fun, t, x0, vals, rand = None)
+        xf = x[0, 1]
+
+        self.assertEqual(xf, 2)
+
+    def test_double_vel(self):
+        t = [0, 1]
+        x0 = [1, 1]
+        vals = [1, 1]
+        
+        def fun(t, x0, vals):
+            return [1, 1]
+
+        x = RGK(fun, t, x0, vals, rand = None)
+        vf = x[1, 1]
+
+        self.assertEqual(vf, 2)
+
 class ODE_unit_tests(unittest.TestCase):
     def test_position(self):
         dxdt, dvdt = ODE(0, [1, 1], [1, 1])
@@ -51,8 +77,8 @@ class ODE_unit_tests(unittest.TestCase):
 
 class Langevin_unit_tests(unittest.TestCase):
     def test_file(self):
-        Langevin('Test', 100, 1, 0, 0, 0.00000001, 1, 300)
-        self.assertTrue(os.path.exists('Test.txt'))
+        Langevin(FileName = 'file_test.txt', t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
+        self.assertTrue(os.path.exists('file_test.txt'))
 
 if __name__ == "__main__":
 	unittest.main()

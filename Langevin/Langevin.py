@@ -11,7 +11,7 @@ def RGK(fun, t, y0, vals, rand = None):
     
     The ODE('s) to be integrated. Should take the independent variable (t) and the dependent variable (y) as arguments, in that order. Should return the derivative of y with respect to t.
 
-    For multiple ordinary differential equations, the dependent variable input should be a list of each variable. The output should return each derivative in the same order that the variables were input.
+    For multiple ordinary differential equations, the dependent variable input should be a list of each variable. The output should return each derivative in the same order that the variables were input, as a list.
 
     It is important that the initial conditions (y0) are in the same order as the output of fun.
 
@@ -46,10 +46,10 @@ def RGK(fun, t, y0, vals, rand = None):
         tn = t[i + 1]
         h = t[i + 1] - t[i]
 
-        k1 = h*fun(tn, yn, vals)
-        k2 = h*fun(tn + h/2, yn + k1/2, vals)
-        k3 = h*fun(tn + h/2, yn + k2/2, vals)
-        k4 = h*fun(tn + h, yn + k3, vals)
+        k1 = h*np.array(fun(tn, yn, vals))
+        k2 = h*np.array(fun(tn + h/2, yn + k1/2, vals))
+        k3 = h*np.array(fun(tn + h/2, yn + k2/2, vals))
+        k4 = h*np.array(fun(tn + h, yn + k3, vals))
 
         F[:, i + 1] = yn + 1/6*(k1 + 2*k2 + 2*k3 + k4)
         if rand != None:
@@ -77,7 +77,7 @@ def ODE(t, x0, vals):
 
     Returns:
 
-    dxdt, dvdt (list):
+    [dxdt, dvdt] (list):
 
     The velocity and acceleration at the specified time, position, and velocity.
     '''
@@ -89,7 +89,7 @@ def ODE(t, x0, vals):
     dxdt = v
     dvdt = -gamma*v/m
 
-    return dxdt, dvdt
+    return [dxdt, dvdt]
 
 def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
     t = np.linspace(0, t_t, int(t_t/dt))
@@ -109,7 +109,7 @@ def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
     for i in range(len(x)):
         lines.append(str(i) + ' ' + str(t[i]) + ' ' + str(x[i]) + ' ' + str(v[i]))
 
-    F = open(FileName + '.txt', 'w')
+    F = open(FileName, 'w')
     for i in range(len(lines)):
         F.write(lines[i])
     F.close()

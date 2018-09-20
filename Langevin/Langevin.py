@@ -92,6 +92,61 @@ def ODE(t, x0, vals):
     return [dxdt, dvdt]
 
 def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
+    '''
+    Takes a file name and Langevin parameters and simulates Brownian motion of a particle. Prints the final position and velocity of the particle and saves the index, time, position, and velocity of the particle at each time step in a file with the given file name.
+
+    Arguments:
+
+    FileName (string):
+
+    The filename for the particle properties to be saved to. Requires an extension.
+
+    t_t (float):
+
+    The total time for the simulation to run in seconds.
+
+    dt (float):
+
+    The time step in seconds.
+
+    init_pos (float):
+
+    The initial position of the particle in m.
+
+    init_vel (float):
+
+    The initial velocity of the particle in m/s.
+
+    m (float):
+
+    The mass of the particle in kg.
+
+    gamma (float):
+
+    The damping coefficient in kg/s.
+
+    T (float):
+
+    The temperature of the system.
+
+    Lambda (float):
+
+    A scaling parameter for the standard deviation of the random force.
+
+    Prints:
+
+    x[-1] (float):
+
+    The final position of the particle.
+
+    v[-1] (float):
+
+    The final velocity of the particle.
+
+    Saves:
+
+    The index, time, position and velocity of the particle at each time step.
+    '''
     t = np.linspace(0, t_t, int(t_t/dt))
     rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
     vals = [m, gamma]

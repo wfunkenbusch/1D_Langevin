@@ -84,18 +84,30 @@ class params_unit_tests(unittest.TestCase):
         self.assertEqual(vals[1], 11)
         self.assertEqual(x0[0], 3)
         self.assertEqual(x0[1], 5)
-		
+
 class Langevin_unit_tests(unittest.TestCase):
-    def test_file(self):
+    def test_initial(self):
         np.random.seed(1234)
-        Langevin(FileName = 'file_test.txt', t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
+        t, x, v = Langevin(t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
+        self.assertEqual(x[0], 0)
+        self.assertEqual(v[0], 0)
+
+    def test_final(self):
+        np.random.seed(1234)
+        t, x, v = Langevin(t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
+        self.assertEqual(x[-1], 3.828046861000748e-05)
+        self.assertEqual(v[-1], 4.3831785467278256e-05)
+
+class Save_unit_tests(unittest.TestCase):
+    def test_file(self):
+        Save('file_test.txt', [0, 1, 2], [3, 4, 5], [6, 7, 8])
         self.assertTrue(os.path.exists('file_test.txt'))
 
     def test_output(self):
         F = open('file_test.txt', 'r')
         last_line = F.readlines()[-1]
         F.close()
-        self.assertEqual('999 1.0 3.828046861000748e-05 4.3831785467278256e-05\n', last_line)
+        self.assertEqual('2 2 5 8\n', last_line)
 
 if __name__ == "__main__":
     unittest.main()

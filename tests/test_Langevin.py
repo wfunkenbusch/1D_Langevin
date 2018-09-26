@@ -75,11 +75,27 @@ class ODE_unit_tests(unittest.TestCase):
         dxdt, dvdt = ODE(0, [1, 1], [1, 0])
         self.assertEqual(dvdt, 0)
 
+class params_unit_tests(unittest.TestCase):
+    def test_params(self):
+        t, rand, vals, x0 = params(1, 0.5, 3, 5, 7, 11, 13, 17)
+        self.assertEqual(t[1], 0.5)
+        self.assertEqual(rand[2], np.sqrt(2*1.38064852*10**(-23)*13*17*0.5))
+        self.assertEqual(vals[0], 7)
+        self.assertEqual(vals[1], 11)
+        self.assertEqual(x0[0], 3)
+        self.assertEqual(x0[1], 5)
+		
 class Langevin_unit_tests(unittest.TestCase):
     def test_file(self):
         np.random.seed(1234)
         Langevin(FileName = 'file_test.txt', t_t = 1, dt = 1e-3, init_pos = 0, init_vel = 0, m = 1e-9, gamma = 1e-10, T = 300, Lambda = 1)
         self.assertTrue(os.path.exists('file_test.txt'))
 
+    def test_output(self):
+        F = open('file_test.txt', 'r')
+        last_line = F.readlines()[-1]
+        F.close()
+        self.assertEqual('999 1.0 3.828046861000748e-05 4.3831785467278256e-05\n', last_line)
+
 if __name__ == "__main__":
-	unittest.main()
+    unittest.main()

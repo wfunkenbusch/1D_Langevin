@@ -91,7 +91,16 @@ def ODE(t, x0, vals):
 
     return [dxdt, dvdt]
 
-def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
+def params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, rand = 'yes'):
+    t = np.linspace(0, t_t, int(t_t//dt + 1))
+    if rand != None:
+        rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
+    vals = [m, gamma]
+    x0 = [init_pos, init_vel]
+    	
+    return t, rand, vals, x0
+
+def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1, rand = 'yes'):
     '''
     Takes a file name and Langevin parameters and simulates Brownian motion of a particle. Prints the final position and velocity of the particle and saves the index, time, position, and velocity of the particle at each time step in a file with the given file name.
 
@@ -133,6 +142,10 @@ def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
 
     A scaling parameter for the standard deviation of the random force.
 
+    rand (value):
+
+    If None, the random function is disabled.
+
     Prints:
 
     x[-1] (float):
@@ -147,10 +160,7 @@ def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
 
     The index, time, position and velocity of the particle at each time step.
     '''
-    t = np.linspace(0, t_t, int(t_t/dt))
-    rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
-    vals = [m, gamma]
-    x0 = [init_pos, init_vel]
+    t, rand, vals, x0 = params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda)
 
     ans = RGK(ODE, t, x0, vals, rand = rand)
     x = ans[0, :]
@@ -162,7 +172,7 @@ def Langevin(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1):
     lines = ['index, t, x, v']
 
     for i in range(len(x)):
-        lines.append(str(i) + ' ' + str(t[i]) + ' ' + str(x[i]) + ' ' + str(v[i]))
+        lines.append(str(i) + ' ' + str(t[i]) + ' ' + str(x[i]) + ' ' + str(v[i]) + '\n')
 
     F = open(FileName, 'w')
     for i in range(len(lines)):

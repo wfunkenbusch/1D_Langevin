@@ -119,9 +119,12 @@ class Save_unit_tests(unittest.TestCase):
 class Hist_unit_tests(unittest.TestCase):
     def test_file(self):
         Hist('hist_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5, trials = 10)
-        self.assertTrue(os.path.exists('hist_test_1.txt'))
-        self.assertTrue(os.path.exists('hist_test_9.txt'))
         self.assertTrue(os.path.exists('hist_test_hist.pdf'))
+
+class Plot_unit_tests(unittest.TestCase):
+    def test_file(self):
+        Plot('plot_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5)
+        self.assertTrue(os.path.exists('plot_test.pdf'))
 
 if __name__ == "__main__":
     unittest.main()

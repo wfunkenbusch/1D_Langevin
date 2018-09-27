@@ -40,8 +40,8 @@ def RGK(fun, t, y0, vals, wall_size, rand = None):
 
     for i in range(len(t) - 1):
         if F[0, i] <= 0 or F[0, i] >= wall_size:
-            F = F[:, :i + 2]
-            t = t[:i + 2]
+            F = F[:, :i + 1]
+            t = t[:i + 1]
             break
         yn = F[:, i] #sets the current values in yn
         tn = t[i] #sets the current time
@@ -219,17 +219,36 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     times = [] #will store the times to be saved in the histogram
     for i in range(trials):
         t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
-        Save(FileName + '_' + str(i) + '.txt', t, x, v)
         if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
             times.append(t[-1])
     
+    #plotting
     f = plt.figure()
-    plt.xlabel('Time (au)', fontsize = 16)
+    plt.xlabel('Time', fontsize = 16)
     plt.ylabel('Frequency', fontsize = 16)
     plt.hist(times, bins = 'auto')
     f.savefig(FileName + '_hist.pdf', bbox_inches = 'tight')
 
+def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes'):
+    '''
+    Plots position vs. time for Brownian motion.
 
+    Arguments:
+    FileName (string):
+    The base name of the file which will contain the graph. Will be saved as a pdf file.
+
+    See Hist for other arguments
+
+    Saves:
+    A plot of position vs. time for a single simulation of Brownian motion.
+    '''
+
+    t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
+    f = plt.figure()
+    plt.xlabel('Time', fontsize = 16)
+    plt.ylabel('Position', fontsize = 16)
+    plt.plot(t, x)
+    f.savefig(FileName + '.pdf', bbox_inches = 'tight')
 
 
 

@@ -177,14 +177,19 @@ def Save(FileName, t, x, v):
     
     t, x, v (arrays):
     See Langevin.
+
+    Saves:
+    File with indices, times, positions, and velocities.
+
+    Returns:
+    x[-1], v[-1] (floats):
+    The final position and velocity, respectively, of the particle.
     '''
 	
     #prints the final position and velocity
-    #print('The final position of the particle was {} m.' .format(x[-1]))
-    #print('The final velocity of the particle was {} m/s.' .format(v[-1]))
 
     lines = ['index, t, x, v\n'] #list to store the lines to be saved into the file
-       			       #the first line has headings for each column
+       			                 #the first line has headings for each column
 
     #stores each set of values
     for i in range(len(x)):
@@ -195,6 +200,10 @@ def Save(FileName, t, x, v):
     for i in range(len(lines)):
         F.write(lines[i])
     F.close()
+
+    print('The final particle position is {}' .format(x[-1]))
+    print('The final particle velocity is {}' .format(v[-1]))
+    return x[-1], v[-1]
 
 def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100):
     '''
@@ -219,6 +228,7 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     times = [] #will store the times to be saved in the histogram
     for i in range(trials):
         t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
+        xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v)
         if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
             times.append(t[-1])
     
@@ -249,11 +259,5 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     plt.ylabel('Position', fontsize = 16)
     plt.plot(t, x)
     f.savefig(FileName + '.pdf', bbox_inches = 'tight')
-
-
-
-
-
-
 
 

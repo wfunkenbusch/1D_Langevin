@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
+import os
 
-def RGK(fun, t, y0, vals, rand = None):
+def RGK(fun, t, y0, vals, wall_size, rand = None):
     '''
     Takes a function, time range, and initial conditions, and numerically integratesthe function according to the Runge-Kutta Method.
 
@@ -21,6 +23,9 @@ def RGK(fun, t, y0, vals, rand = None):
     vals (list or array):
     The problem parameters which fun must take in addition to t and y. Should be in the same order that they are required in the function.
 
+    wall_size (float):
+    The location of the second wall. The first wall is placed at x = 0. If the particle hits the wall, the simulation will stop.
+
     rand (list or array):
     A random value to be added to a variable. The first input is the variable to be added to (indexed 0, 1,...). The second input is the mean of the distribution, the third input is the standard deviation of the distribution. The value is pulled from a normal distribution. The value will be multiplied by the change in t at that time step and divided by the mass, m (vals[0]). This option can be opted out of by setting rand = None, which is the default.
 
@@ -34,11 +39,15 @@ def RGK(fun, t, y0, vals, rand = None):
     yn = np.zeros(len(y0)) #array to store the current values of the dependent variables
 
     for i in range(len(t) - 1):
+        if F[0, i] <= 0 or F[0, i] >= wall_size:
+            F = F[:, :i + 2]
+            t = t[:i + 2]
+            break
         yn = F[:, i] #sets the current values in yn
-        tn = t[i + 1] #sets the current time
+        tn = t[i] #sets the current time
         h = t[i + 1] - t[i] #sets the current time step
 
-		#RGK parameters
+	#RGK parameters
         k1 = h*np.array(fun(tn, yn, vals))
         k2 = h*np.array(fun(tn + h/2, yn + k1/2, vals))
         k3 = h*np.array(fun(tn + h/2, yn + k2/2, vals))
@@ -47,8 +56,8 @@ def RGK(fun, t, y0, vals, rand = None):
         F[:, i + 1] = yn + 1/6*(k1 + 2*k2 + 2*k3 + k4) #sets the next values in F
         if rand != None:
             F[rand[0], i + 1] += np.random.normal(rand[1], rand[2])*h/vals[0] #adds a random aspect to the values, if desired
-
-    return F
+	
+    return t, F
 
 def ODE(t, x0, vals):
     '''
@@ -80,7 +89,7 @@ def ODE(t, x0, vals):
 
 def params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, rand = 'yes'):
     '''
-    Takes Brownian motion parameters and converts them into the format to be used in RGK. All parameters are in SI units.
+    Takes Brownian motion parameters and converts them into the format to be used in RGK. All parameters are in reduced units.
     
     Arguments:
     t_t (float):
@@ -105,7 +114,7 @@ def params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, rand = 'yes'):
     The temperature of the system.
     
     Lambda (float):
-    A scaling parameter for the standard deviation of the random force.
+    A scaling parameter for the standard deviation of the random force. Default 1e-20.
 	
     rand:
     If None, the random function is disabled.
@@ -125,17 +134,19 @@ def params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, rand = 'yes'):
     '''
     t = np.linspace(0, t_t, int(t_t//dt + 1)) #starts at 0 and ends at t_t
     if rand != None:
-        rand = [1, 0, np.sqrt(2*1.38064852*10**(-23)*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
+        rand = [1, 0, np.sqrt(2*1*T*Lambda*dt)] #Adds to velocity, centered at 0, standard deviation of sqrt(2k_B*T*lambda*(t - t'))
+                                                #Note that kB = 1 in reduced units
     vals = [m, gamma] #mass and damping coefficient
     x0 = [init_pos, init_vel] #initial position and velocity
     	
     return t, rand, vals, x0
 
-def Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1, rand = 'yes'):
+def Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1e-20, rand = 'yes'):
     '''
     Takes Brownian motion parameters and outputs the time, position, and velocity arrays.
     
     Arguments:
+    See RGK
     See params
     
     Returns:
@@ -150,7 +161,7 @@ def Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda = 1, rand = 'yes')
     '''
     t, rand, vals, x0 = params(t_t, dt, init_pos, init_vel, m, gamma, T, Lambda)
 
-    ans = RGK(ODE, t, x0, vals, rand = rand)
+    t, ans = RGK(ODE, t, x0, vals, wall_size, rand = rand)
     x = ans[0, :]
     v = ans[1, :]
 
@@ -169,10 +180,10 @@ def Save(FileName, t, x, v):
     '''
 	
     #prints the final position and velocity
-    print('The final position of the particle was {} m.' .format(x[-1]))
-    print('The final velocity of the particle was {} m/s.' .format(v[-1]))
+    #print('The final position of the particle was {} m.' .format(x[-1]))
+    #print('The final velocity of the particle was {} m/s.' .format(v[-1]))
 
-    lines = ['index, t, x, v'] #list to store the lines to be saved into the file
+    lines = ['index, t, x, v\n'] #list to store the lines to be saved into the file
        			       #the first line has headings for each column
 
     #stores each set of values
@@ -184,4 +195,46 @@ def Save(FileName, t, x, v):
     for i in range(len(lines)):
         F.write(lines[i])
     F.close()
+
+def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100):
+    '''
+    Takes a file name and Brownian motion parameters and outputs a histogram with the amount of time it took to hit a wall. Also saves the data in files.
+
+    Arguments:
+    FileName (string):
+    The base name of the file to be saved. All trials will be saved under the format FileName_i.txt where i is the trial number (indexed from 0), the histogram will be saved as FileName.pdf, and the times will be saved as FileName_times.txt
+
+    trials (float):
+    The number of trials to be performed. Default 100.
+
+    See RGK and params for other arguments.
+
+    Saves:
+    Text files for each trial containing the indices, times, positions, and velocities. Saved as FileName_i.txt where i is the trial number (indexed from 0)
+
+    A histogram containing the amount of time for each trial to reach either wall (see wall_size). Saved as FileName.pdf
+
+'''
+    
+    times = [] #will store the times to be saved in the histogram
+    for i in range(trials):
+        t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
+        Save(FileName + '_' + str(i) + '.txt', t, x, v)
+        if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
+            times.append(t[-1])
+    
+    f = plt.figure()
+    plt.xlabel('Time (au)', fontsize = 16)
+    plt.ylabel('Frequency', fontsize = 16)
+    plt.hist(times, bins = 'auto')
+    f.savefig(FileName + '_hist.pdf', bbox_inches = 'tight')
+
+
+
+
+
+
+
+
+
 

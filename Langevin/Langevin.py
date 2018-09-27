@@ -167,13 +167,16 @@ def Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1e-20
 
     return t, x, v
 
-def Save(FileName, t, x, v):
+def Save(FileName, t, x, v, p = 'No'):
     '''
     Takes a file name, times, positions, and velocities, and saves them in a file.
     
     Arguments:
     FileName (string):
     The name of the file to be saved (with file extension)
+
+    print:
+    If 'No', does not print final position and velocity. Will still save values to a file. Default 'No'.
     
     t, x, v (arrays):
     See Langevin.
@@ -201,11 +204,12 @@ def Save(FileName, t, x, v):
         F.write(lines[i])
     F.close()
 
-    print('The final particle position is {}' .format(x[-1]))
-    print('The final particle velocity is {}' .format(v[-1]))
+    if p != 'No':
+        print('The final particle position is {}' .format(x[-1]))
+        print('The final particle velocity is {}' .format(v[-1]))
     return x[-1], v[-1]
 
-def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100):
+def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100, p = 'No'):
     '''
     Takes a file name and Brownian motion parameters and outputs a histogram with the amount of time it took to hit a wall. Also saves the data in files.
 
@@ -216,7 +220,7 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     trials (float):
     The number of trials to be performed. Default 100.
 
-    See RGK and params for other arguments.
+    See RGK, Save, and params for other arguments.
 
     Saves:
     Text files for each trial containing the indices, times, positions, and velocities. Saved as FileName_i.txt where i is the trial number (indexed from 0)
@@ -228,7 +232,7 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     times = [] #will store the times to be saved in the histogram
     for i in range(trials):
         t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
-        xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v)
+        xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v, p)
         if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
             times.append(t[-1])
     
@@ -239,7 +243,7 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     plt.hist(times, bins = 'auto')
     f.savefig(FileName + '_hist.pdf', bbox_inches = 'tight')
 
-def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes'):
+def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', p = 'No'):
     '''
     Plots position vs. time for Brownian motion.
 
@@ -254,10 +258,9 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     '''
 
     t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
+    Save(FileName + '.txt', t, x, v, p)
     f = plt.figure()
     plt.xlabel('Time', fontsize = 16)
     plt.ylabel('Position', fontsize = 16)
     plt.plot(t, x)
     f.savefig(FileName + '.pdf', bbox_inches = 'tight')
-
-

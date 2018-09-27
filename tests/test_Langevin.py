@@ -107,7 +107,7 @@ class Langevin_unit_tests(unittest.TestCase):
 
 class Save_unit_tests(unittest.TestCase):
     def test_file(self):
-        xf, vf = Save('file_test.txt', [0, 1, 2], [3, 4, 5], [6, 7, 8])
+        xf, vf = Save('file_test.txt', [0, 1, 2], [3, 4, 5], [6, 7, 8], p = 'No')
         self.assertTrue(os.path.exists('file_test.txt'))
 
     def test_file_output(self):
@@ -117,21 +117,24 @@ class Save_unit_tests(unittest.TestCase):
         self.assertEqual('2 2 5 8\n', last_line)
 
     def test_output(self):
-        xf, vf = Save('file_test.txt', [0, 1, 2], [3, 4, 5], [6, 7, 8])
+        xf, vf = Save('file_test.txt', [0, 1, 2], [3, 4, 5], [6, 7, 8], p = 'No')
         self.assertEqual(xf, 5)
         self.assertEqual(vf, 8)
 
 class Hist_unit_tests(unittest.TestCase):
     def test_file(self):
-        Hist('hist_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5, trials = 10)
+        np.random.seed(1234)
+        Hist('hist_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5, trials = 10, p = 'No')
         self.assertTrue(os.path.exists('hist_test_1.txt'))
         self.assertTrue(os.path.exists('hist_test_9.txt'))
         self.assertTrue(os.path.exists('hist_test_hist.pdf'))
 
 class Plot_unit_tests(unittest.TestCase):
-    def test_file(self):
-        Plot('plot_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5)
+    def test_plot(self):
+        np.random.seed(1234)
+        Plot('plot_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 5, p = 'No')
         self.assertTrue(os.path.exists('plot_test.pdf'))
+        self.assertTrue(os.path.exists('plot_test.txt'))
 
 if __name__ == "__main__":
     unittest.main()

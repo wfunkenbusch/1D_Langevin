@@ -209,7 +209,7 @@ def Save(FileName, t, x, v, p = 'No'):
         print('The final particle velocity is {}' .format(v[-1]))
     return x[-1], v[-1]
 
-def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100, p = 'No'):
+def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes', trials = 100, p = 'No', s = 'No'):
     '''
     Takes a file name and Brownian motion parameters and outputs a histogram with the amount of time it took to hit a wall. Also saves the data in files.
 
@@ -219,6 +219,9 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
 
     trials (float):
     The number of trials to be performed. Default 100.
+
+    s:
+    If 'No', does not save the data individual data files for the histogram.
 
     See RGK, Save, and params for other arguments.
 
@@ -232,7 +235,8 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     times = [] #will store the times to be saved in the histogram
     for i in range(trials):
         t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
-        xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v, p)
+        if s != 'No':
+            xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v, p)
         if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
             times.append(t[-1])
     

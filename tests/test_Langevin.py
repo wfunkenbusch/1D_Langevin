@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import os.path
+import argparse
 import Langevin
 from Langevin import Langevin
 from Langevin.Langevin import *
@@ -138,8 +139,17 @@ class Plot_unit_tests(unittest.TestCase):
     def test_plot(self):
         np.random.seed(1234)
         Plot('plot_test', t_t = 1000, dt = 1e-1, init_pos = 2.5, init_vel = 0, m = 1, gamma = 1e-1, T = 300, wall_size = 20, p = 'No')
-        self.assertTrue(os.path.exists('plot_test.pdf'))
-        self.assertTrue(os.path.exists('plot_test.txt'))
-
+        self.assertTrue(os.path.exists('plot_test_plot.pdf'))
+        self.assertTrue(os.path.exists('plot_test_plot.txt'))
+'''
+class main_unit_tests(unittest.TestCase):
+    def test_main(self):
+        np.random.seed(1234)
+        #default = args('default', 1, 1e-3, 2.5, 0, 1, 1e-10, 300, 5, 1000, 'Yes', 'Yes', 'No')
+        main()
+        self.assertTrue(os.path.exists('default_hist.pdf'))
+        self.assertTrue(os.path.exists('default_plot.pdf'))
+        self.assertTrue(os.path.exists('default_plot.txt'))
+'''
 if __name__ == "__main__":
     unittest.main()

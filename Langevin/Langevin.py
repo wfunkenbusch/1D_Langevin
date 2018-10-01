@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import argparse
 
 def RGK(fun, t, y0, vals, wall_size, rand = None):
     '''
@@ -229,12 +230,11 @@ def Hist(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     Text files for each trial containing the indices, times, positions, and velocities. Saved as FileName_i.txt where i is the trial number (indexed from 0)
 
     A histogram containing the amount of time for each trial to reach either wall (see wall_size). Saved as FileName.pdf
-
-'''
+    '''
     
     times = [] #will store the times to be saved in the histogram
     for i in range(trials):
-        t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
+        t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda, rand = 'yes') #runs a simulation
         if s != 'No':
             xf, vf = Save(FileName + '_' + str(i) + '.txt', t, x, v, p)
         if x[-1] <= 0 or x[-1] >= wall_size: #only add time if particle hit a wall
@@ -261,10 +261,39 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     A plot of position vs. time for a single simulation of Brownian motion.
     '''
 
-    t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda = 1, rand = 'yes') #runs a simulation
-    Save(FileName + '.txt', t, x, v, p)
+    t, x, v = Langevin(t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda, rand = 'yes') #runs a simulation
+    Save(FileName + '_plot.txt', t, x, v, p)
     f = plt.figure()
     plt.xlabel('Time', fontsize = 16)
     plt.ylabel('Position', fontsize = 16)
     plt.plot(t, x)
-    f.savefig(FileName + '.pdf', bbox_inches = 'tight')
+    f.savefig(FileName + '_plot.pdf', bbox_inches = 'tight')
+
+def get_parser():
+    p = argparse.ArgumentParser()
+    p.add_argument('--FileName', type = str, default = 'default', help = 'String: Base file name')
+    p.add_argument('--t_t', type = float, default = 100, help = 'Float: Total time of simulation')
+    p.add_argument('--dt', type = float, default = 1e-1, help = 'Float: Time step of simulation')
+    p.add_argument('--init_pos', type = float, default = 2.5, help = 'Float: Initial position of particle')
+    p.add_argument('--init_vel', type = float, default = 0, help = 'Float: Initial velocity of particle')
+    p.add_argument('--m', type = float, default = 1, help = 'Float: Mass of particle')
+    p.add_argument('--gamma', type = float, default = 1e-1, help = 'Float: Damping coefficient')
+    p.add_argument('--T', type = float, default = 300, help = 'Float: Temperature')
+    p.add_argument('--Lambda', type = float, default = 1, help = 'Float: Variance parameter for random force')
+    p.add_argument('--trials', type = int, default = 100, help = 'Integer: Number of trials to run')
+    p.add_argument('--wall_size', type = float, default = 5, help = 'Float: Position of second wall (first wall at 0)')
+    p.add_argument('--rand', type = str, default = 'Yes', help = 'String: Whether to apply the random force, "No" if no random force')
+    p.add_argument('--p', type = str, default = 'Yes', help = 'String: Whether to print the final result, "No" if no printing')
+    p.add_argument('--s', type = str, default = 'No', help = 'Whether to save histogram data files, "No" if no saveing')
+    
+    args = p.parse_args()
+
+    return args
+
+def main():
+    args = get_parser()
+    Hist(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.trials, args.p, args.s)
+    Plot(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.p)
+
+if __name__ == '__main__':
+    main()

@@ -56,7 +56,7 @@ def RGK(fun, t, y0, vals, wall_size, rand = None):
 
         F[:, i + 1] = yn + 1/6*(k1 + 2*k2 + 2*k3 + k4) #sets the next values in F
         if rand != None:
-            F[rand[0], i + 1] += np.random.normal(rand[1], rand[2])*h/vals[0] #adds a random aspect to the values, if desired
+            F[rand[0], i + 1] += np.random.normal(loc = rand[1], scale = rand[2])*h/vals[0] #adds a random aspect to the values, if desired
 	
     return t, F
 
@@ -269,31 +269,48 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     plt.plot(t, x)
     f.savefig(FileName + '_plot.pdf', bbox_inches = 'tight')
 
-def get_parser():
-    p = argparse.ArgumentParser()
-    p.add_argument('--FileName', type = str, default = 'default', help = 'String: Base file name')
-    p.add_argument('--t_t', type = float, default = 100, help = 'Float: Total time of simulation')
-    p.add_argument('--dt', type = float, default = 1e-1, help = 'Float: Time step of simulation')
-    p.add_argument('--init_pos', type = float, default = 2.5, help = 'Float: Initial position of particle')
-    p.add_argument('--init_vel', type = float, default = 0, help = 'Float: Initial velocity of particle')
-    p.add_argument('--m', type = float, default = 1, help = 'Float: Mass of particle')
-    p.add_argument('--gamma', type = float, default = 1e-1, help = 'Float: Damping coefficient')
-    p.add_argument('--T', type = float, default = 300, help = 'Float: Temperature')
-    p.add_argument('--Lambda', type = float, default = 1, help = 'Float: Variance parameter for random force')
-    p.add_argument('--trials', type = int, default = 100, help = 'Integer: Number of trials to run')
-    p.add_argument('--wall_size', type = float, default = 5, help = 'Float: Position of second wall (first wall at 0)')
-    p.add_argument('--rand', type = str, default = 'Yes', help = 'String: Whether to apply the random force, "No" if no random force')
-    p.add_argument('--p', type = str, default = 'Yes', help = 'String: Whether to print the final result, "No" if no printing')
-    p.add_argument('--s', type = str, default = 'No', help = 'Whether to save histogram data files, "No" if no saveing')
+def getParser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--FileName', type = str, default = 'default', help = 'String: Base file name')
+    parser.add_argument('--t_t', type = float, default = 1000, help = 'Float: Total time of simulation')
+    parser.add_argument('--dt', type = float, default = 1e-1, help = 'Float: Time step of simulation')
+    parser.add_argument('--init_pos', type = float, default = 2.5, help = 'Float: Initial position of particle')
+    parser.add_argument('--init_vel', type = float, default = 0, help = 'Float: Initial velocity of particle')
+    parser.add_argument('--m', type = float, default = 1, help = 'Float: Mass of particle')
+    parser.add_argument('--gamma', type = float, default = 1, help = 'Float: Damping coefficient')
+    parser.add_argument('--T', type = float, default = 300, help = 'Float: Temperature')
+    parser.add_argument('--Lambda', type = float, default = 1, help = 'Float: Variance parameter for random force')
+    parser.add_argument('--trials', type = int, default = 1000, help = 'Integer: Number of trials to run')
+    parser.add_argument('--wall_size', type = float, default = 5, help = 'Float: Position of second wall (first wall at 0)')
+    parser.add_argument('--rand', type = str, default = 'Yes', help = 'String: Whether to apply the random force, "No" if no random force')
+    parser.add_argument('--p', type = str, default = 'Yes', help = 'String: Whether to print the final result, "No" if no printing')
+    parser.add_argument('--s', type = str, default = 'No', help = 'Whether to save histogram data files, "No" if no saveing')
     
-    args = p.parse_args()
+    args = parser.parse_args()
 
     return args
-
+'''
+class status:
+    def __init__(self, FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, wall_size, trials, rand, p, s):
+        self.FileName = FileName
+        self.t_t = t_t
+        self.dt = dt
+        self.init_pos = init_pos
+        self.init_vel = init_vel
+        self.m = m
+        self.gamma = gamma
+        self.T = T
+        self.Lambda = Lambda
+        self.trials = trials
+        self.wall_size = wall_size
+        self.rand = rand
+        self.p = p
+        self.s = s
+'''
 def main():
-    args = get_parser()
-    Hist(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.trials, args.p, args.s)
+    args = getParser()
     Plot(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.p)
+    Hist(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.trials, args.p, args.s)
 
 if __name__ == '__main__':
     main()

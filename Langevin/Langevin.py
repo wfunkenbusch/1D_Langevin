@@ -269,9 +269,9 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     plt.plot(t, x)
     f.savefig(FileName + '_plot.pdf', bbox_inches = 'tight')
 
-def getParser():
+def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--FileName', type = str, default = 'default', help = 'String: Base file name')
+    parser.add_argument('--FileName', type = str, default = 'd', help = 'String: Base file name')
     parser.add_argument('--t_t', type = float, default = 1000, help = 'Float: Total time of simulation')
     parser.add_argument('--dt', type = float, default = 1e-1, help = 'Float: Time step of simulation')
     parser.add_argument('--init_pos', type = float, default = 2.5, help = 'Float: Initial position of particle')
@@ -286,29 +286,12 @@ def getParser():
     parser.add_argument('--p', type = str, default = 'Yes', help = 'String: Whether to print the final result, "No" if no printing')
     parser.add_argument('--s', type = str, default = 'No', help = 'Whether to save histogram data files, "No" if no saveing')
     
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     return args
-'''
-class status:
-    def __init__(self, FileName, t_t, dt, init_pos, init_vel, m, gamma, T, Lambda, wall_size, trials, rand, p, s):
-        self.FileName = FileName
-        self.t_t = t_t
-        self.dt = dt
-        self.init_pos = init_pos
-        self.init_vel = init_vel
-        self.m = m
-        self.gamma = gamma
-        self.T = T
-        self.Lambda = Lambda
-        self.trials = trials
-        self.wall_size = wall_size
-        self.rand = rand
-        self.p = p
-        self.s = s
-'''
+    
 def main():
-    args = getParser()
+    args = get_parser()
     Plot(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.p)
     Hist(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.trials, args.p, args.s)
 

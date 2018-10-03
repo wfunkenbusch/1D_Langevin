@@ -5,6 +5,7 @@
 Simulates 1D Brownian motion using Langevin Dynamics for a system without potential energy. Uses Runge-Kutta numerical integration. Plots the path of a single simulation and a histogram of the amount of time it takes to reach a desired point.
 
 Implementation:
+1. Must be run on Python 3.5 or above
 1. Needed outside modules: numpy, matplotlib, argparse, os (if unit testing)
 2. Clone this repository using the following command: git clone https://github.com/wfunkenbusch/1D_Langevin.git
 3. Enter the base directory (/1D_Langevin)

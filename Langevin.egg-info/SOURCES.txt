@@ -24,4 +24,11 @@ docs/make.bat
 docs/readme.rst
 docs/usage.rst
 tests/__init__.py
+tests/file_test.txt
+tests/hist_test_0.txt
+tests/hist_test_1.txt
+tests/hist_test_2_hist.pdf
+tests/hist_test_hist.pdf
+tests/plot_test_plot.pdf
+tests/plot_test_plot.txt
 tests/test_Langevin.py

@@ -270,6 +270,9 @@ def Plot(FileName, t_t, dt, init_pos, init_vel, m, gamma, T, wall_size, Lambda =
     f.savefig(FileName + '_plot.pdf', bbox_inches = 'tight')
 
 def get_parser():
+    '''
+    Function which allows for command line inputs.
+    '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--FileName', type = str, default = 'd', help = 'String: Base file name')
     parser.add_argument('--t_t', type = float, default = 1000, help = 'Float: Total time of simulation')
@@ -291,6 +294,9 @@ def get_parser():
     return args
     
 def main():
+    '''
+    Main function. Takes command line inputs. Runs Plot function then Hist function with same inputs.
+    '''
     args = get_parser()
     Plot(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.p)
     Hist(args.FileName, args.t_t, args.dt, args.init_pos, args.init_vel, args.m, args.gamma, args.T, args.wall_size, args.Lambda, args.rand, args.trials, args.p, args.s)

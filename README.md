@@ -8,8 +8,8 @@ Implementation:
 1. Must be run on Python 3.5 or above
 1. Needed outside modules: numpy, matplotlib, argparse, os (if unit testing)
 2. Clone this repository using the following command: git clone https://github.com/wfunkenbusch/1D_Langevin.git
-3. Enter the base directory (/1D_Langevin)
-4. Run the following command: python Langevin/Langevin.py --arguments
+3. Enter the base directory (cd 1D_Langevin)
+4. To run the code, use the following command: python Langevin/Langevin.py --arguments
 
 Arguments:
 
@@ -37,7 +37,7 @@ python Langevin/Langevin.py --FileName example --dt 1e-2 --init_pos 5 --wall_siz
 * --init_pos
     * type: float
     * default: 2.5
-    * The initial position of the particle. If equal to 0 or wall_size, the current simulation will exit immediately.
+    * The initial position of the particle. If less than 0 or greater than wall_size, the current simulation will exit immediately.
 
 * --init_vel
     * type: float

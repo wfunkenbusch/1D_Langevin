@@ -282,7 +282,7 @@ def get_parser():
     parser.add_argument('--Lambda', type = float, default = 1, help = 'Float: Variance parameter for random force')
     parser.add_argument('--trials', type = int, default = 1000, help = 'Integer: Number of trials to run')
     parser.add_argument('--wall_size', type = float, default = 5, help = 'Float: Position of second wall (first wall at 0)')
-    parser.add_argument('--rand', type = str, default = 'Yes', help = 'String: Whether to apply the random force, "No" if no random force')
+    parser.add_argument('--rand', type = str, default = 'Yes', help = 'String: Whether to apply the random force, None if no random force')
     parser.add_argument('--p', type = str, default = 'Yes', help = 'String: Whether to print the final result, "No" if no printing')
     parser.add_argument('--s', type = str, default = 'No', help = 'Whether to save histogram data files, "No" if no saveing')
     
